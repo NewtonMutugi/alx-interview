@@ -6,12 +6,13 @@
 // You must use the Star wars API
 // You must use the request module
 const request = require('request');
-const url = 'https://swapi-api.hbtn.io/api/films/' + process.argv[2];
-const options = { json: true };
+
 if (!process.argv[2]) {
   console.log('Usage: ./0-starwars_characters.js movieId');
   process.exit(1);
 }
+
+const url = `https://swapi-api.hbtn.io/api/films/${process.argv[2]}`;
 request(url, async (error, response, body) => {
   error && console.error('Error: ', error);
   body = JSON.parse(body);
@@ -27,4 +28,3 @@ request(url, async (error, response, body) => {
     });
   }
 });
-request(url, options, printCharacters);
