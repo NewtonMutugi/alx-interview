@@ -8,17 +8,23 @@
 const request = require('request');
 const url = 'https://swapi-api.hbtn.io/api/films/' + process.argv[2];
 const options = { json: true };
-function printCharacters (error, response, body) {
-  if (response.statusCode === 404) {
-    console.log('Movie not found');
-  } else if (!error && response.statusCode === 200) {
-    for (const character of body.characters) {
-      request(character, options, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-          console.log(body.name);
-        }
-      });
-    }
-  }
+if (!process.argv[2]) {
+  console.log('Usage: ./0-starwars_characters.js movieId');
+  process.exit(1);
 }
+request(url, async (error, response, body) => {
+  error && console.error('Error: ', error);
+  body = JSON.parse(body);
+  for (const char of body.characters) {
+    await new Promise((resolve, reject) => {
+      request(char, (error, response, body) => {
+        if (error) {
+          reject(error);
+        }
+        console.log(JSON.parse(body).name);
+        resolve();
+      });
+    });
+  }
+});
 request(url, options, printCharacters);
